@@ -30,10 +30,9 @@ async function run(name, endpoint) {
 // Each job has: name, endpoint, intervalMinutes
 
 const jobs = [
-  { name: 'Auto-publish Amazon',  endpoint: 'auto-publish-amazon?limit=5', interval: 60 },
+  { name: 'Auto-publish',         endpoint: 'auto-publish?limit=5',        interval: 60 },
   { name: 'Process comments',     endpoint: 'process-comments',            interval: 15 },
   { name: 'Price check (Keepa)',  endpoint: 'price-check',                 interval: 60 },
-  { name: 'Enhance deals (AI)',   endpoint: 'enhance-deals?limit=10',      interval: 120 },
   { name: 'Ranking',              endpoint: 'ranking',                     interval: 120 },
   { name: 'Refresh Amazon data',  endpoint: 'refresh-amazon-data?limit=20', interval: 360 },
   { name: 'Expire deals',         endpoint: 'expire',                      interval: 720 },
