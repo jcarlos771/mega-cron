@@ -14,10 +14,15 @@ if (!CRON_SECRET) {
 }
 
 async function run(name, endpoint) {
-  const url = `${API_URL}/cron/${endpoint}${endpoint.includes("?") ? "&" : "?"}secret=${CRON_SECRET}`;
+  // CRON_SECRET now travels as Bearer so it never lands in access logs or
+  // Referer headers. Server still accepts ?secret= during rollout.
+  const url = `${API_URL}/cron/${endpoint}`;
   try {
     const start = Date.now();
-    const res = await fetch(url, { signal: AbortSignal.timeout(90000) });
+    const res = await fetch(url, {
+      signal: AbortSignal.timeout(90000),
+      headers: { Authorization: `Bearer ${CRON_SECRET}` },
+    });
     const data = await res.json();
     const ms = Date.now() - start;
     const summary = data.log
