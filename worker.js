@@ -4,25 +4,30 @@
  * No external dependencies — pure Node.js fetch + setInterval.
  */
 
-const API_URL = process.env.API_URL || 'https://megadescuentos.okdescuentos.com/api';
-const CRON_SECRET = process.env.CRON_SECRET || '';
+const API_URL =
+  process.env.API_URL || "https://megadescuentos.okdescuentos.com/api";
+const CRON_SECRET = process.env.CRON_SECRET || "";
 
 if (!CRON_SECRET) {
-  console.error('CRON_SECRET is required');
+  console.error("CRON_SECRET is required");
   process.exit(1);
 }
 
 async function run(name, endpoint) {
-  const url = `${API_URL}/cron/${endpoint}${endpoint.includes('?') ? '&' : '?'}secret=${CRON_SECRET}`;
+  const url = `${API_URL}/cron/${endpoint}${endpoint.includes("?") ? "&" : "?"}secret=${CRON_SECRET}`;
   try {
     const start = Date.now();
     const res = await fetch(url, { signal: AbortSignal.timeout(90000) });
     const data = await res.json();
     const ms = Date.now() - start;
-    const summary = data.log ? data.log[data.log.length - 1] : JSON.stringify(data).substring(0, 100);
+    const summary = data.log
+      ? data.log[data.log.length - 1]
+      : JSON.stringify(data).substring(0, 100);
     console.log(`[${new Date().toISOString()}] ${name} (${ms}ms): ${summary}`);
   } catch (err) {
-    console.error(`[${new Date().toISOString()}] ${name} FAILED: ${err.message}`);
+    console.error(
+      `[${new Date().toISOString()}] ${name} FAILED: ${err.message}`,
+    );
   }
 }
 
@@ -30,19 +35,48 @@ async function run(name, endpoint) {
 // Each job has: name, endpoint, intervalMinutes
 
 const jobs = [
-  { name: 'Auto-publish',         endpoint: 'auto-publish?limit=6&source=amazon', interval: 60 },
-  { name: 'Process comments',     endpoint: 'process-comments',            interval: 15 },
-  { name: 'Price check (Keepa)',  endpoint: 'price-check',                 interval: 60 },
-  { name: 'Ranking',              endpoint: 'ranking',                     interval: 120 },
-  { name: 'Refresh Amazon data',  endpoint: 'refresh-amazon-data?limit=20', interval: 360 },
-  { name: 'Expire deals',         endpoint: 'expire',                      interval: 720 },
-  { name: 'Cleanup deals',        endpoint: 'cleanup-deals',               interval: 720 },
+  {
+    name: "Auto-publish Amazon",
+    endpoint: "auto-publish?source=amazon",
+    interval: 15,
+  },
+  {
+    name: "Auto-publish Raw Deals",
+    endpoint: "auto-publish-raw-deals",
+    interval: 10,
+  },
+  {
+    name: "Revalidate ML and Community Deals",
+    endpoint: "revalidate-deals",
+    interval: 120,
+  },
+  {
+    name: "Scrape Promodescuentos /nuevas",
+    endpoint: "scrape-promodescuentos-portada",
+    interval: 10,
+  },
+  { name: "Scrape Cazaofertas", endpoint: "scrape-cazaofertas", interval: 30 },
+  { name: "Price check (Keepa)", endpoint: "price-check", interval: 45 },
+  {
+    name: "Process alert emails",
+    endpoint: "process-alert-emails?limit=25",
+    interval: 30,
+  },
+  { name: "Process comments", endpoint: "process-comments", interval: 30 },
+  { name: "Ranking", endpoint: "ranking", interval: 120 },
+  {
+    name: "Refresh Amazon data",
+    endpoint: "refresh-amazon-data?limit=30",
+    interval: 360,
+  },
+  { name: "Expire deals", endpoint: "expire", interval: 1440 },
+  { name: "Cleanup deals", endpoint: "cleanup-deals", interval: 1440 },
 ];
 
-console.log('=== MEGAdescuentos Cron Worker ===');
+console.log("=== MEGAdescuentos Cron Worker ===");
 console.log(`API: ${API_URL}`);
 console.log(`Jobs: ${jobs.length}`);
-console.log('');
+console.log("");
 
 // Stagger start times so they don't all fire at once
 jobs.forEach((job, i) => {
@@ -58,4 +92,4 @@ jobs.forEach((job, i) => {
 
 // Keep process alive
 setInterval(() => {}, 60000);
-console.log('Worker started. Press Ctrl+C to stop.\n');
+console.log("Worker started. Press Ctrl+C to stop.\n");
