@@ -5,7 +5,7 @@
  */
 
 const API_URL =
-  process.env.API_URL || "https://megadescuentos.okdescuentos.com/api";
+  process.env.API_URL || "https://www.megadescuentos.com/api";
 const CRON_SECRET = process.env.CRON_SECRET || "";
 
 if (!CRON_SECRET) {
@@ -43,31 +43,36 @@ const jobs = [
   {
     name: "Auto-publish Amazon",
     endpoint: "auto-publish?source=amazon",
-    interval: 15,
+    interval: 180,
+  },
+  {
+    name: "Auto-publish Mercado Libre",
+    endpoint: "auto-publish?source=mercadolibre",
+    interval: 240,
   },
   {
     name: "Auto-publish Raw Deals",
     endpoint: "auto-publish-raw-deals",
-    interval: 10,
+    interval: 120,
   },
   {
     name: "Revalidate ML and Community Deals",
     endpoint: "revalidate-deals",
-    interval: 120,
+    interval: 180,
   },
   {
     name: "Scrape Promodescuentos /nuevas",
     endpoint: "scrape-promodescuentos-portada",
-    interval: 10,
+    interval: 30,
   },
-  { name: "Scrape Cazaofertas", endpoint: "scrape-cazaofertas", interval: 30 },
-  { name: "Price check (Keepa)", endpoint: "price-check", interval: 45 },
+  { name: "Scrape Cazaofertas", endpoint: "scrape-cazaofertas", interval: 60 },
+  { name: "Price check (Keepa)", endpoint: "price-check", interval: 60 },
   {
     name: "Process alert emails",
     endpoint: "process-alert-emails?limit=25",
-    interval: 30,
+    interval: 60,
   },
-  { name: "Process comments", endpoint: "process-comments", interval: 30 },
+  { name: "Process comments", endpoint: "process-comments", interval: 60 },
   { name: "Ranking", endpoint: "ranking", interval: 120 },
   {
     name: "Refresh Amazon data",
