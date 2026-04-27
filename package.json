@@ -2,6 +2,7 @@
   "name": "mega-cron",
   "version": "1.0.0",
   "scripts": {
-    "start": "node worker.js"
+    "start": "node worker.js",
+    "start:local": "API_URL=http://127.0.0.1:3000/api CRON_SECRET=local-cron-secret-2026 node worker.js"
   }
 }
