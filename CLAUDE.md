@@ -53,6 +53,7 @@ Keep this section in sync with `worker.js` when adding jobs.
 | Refresh Amazon data               | `refresh-amazon-data?limit=30`   | 360 min  |
 | Expire deals                      | `expire`                         | 1440 min |
 | Cleanup deals                     | `cleanup-deals`                  | 1440 min |
+| Trust recalc nightly              | `trust-recalc-nightly`           | 1440 min |
 
 ## Related Repos
 

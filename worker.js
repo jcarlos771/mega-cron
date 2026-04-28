@@ -4,8 +4,7 @@
  * No external dependencies — pure Node.js fetch + setInterval.
  */
 
-const API_URL =
-  process.env.API_URL || "https://www.megadescuentos.com/api";
+const API_URL = process.env.API_URL || "https://www.megadescuentos.com/api";
 const CRON_SECRET = process.env.CRON_SECRET || "";
 
 if (!CRON_SECRET) {
@@ -81,6 +80,13 @@ const jobs = [
   },
   { name: "Expire deals", endpoint: "expire", interval: 1440 },
   { name: "Cleanup deals", endpoint: "cleanup-deals", interval: 1440 },
+  // Trust System v2 — recalc trust_score + rank, expire old sandboxes.
+  // Daily run; honours the trust.dryRun flag inside meganew-next.
+  {
+    name: "Trust recalc nightly",
+    endpoint: "trust-recalc-nightly",
+    interval: 1440,
+  },
 ];
 
 console.log("=== MEGAdescuentos Cron Worker ===");
