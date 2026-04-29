@@ -49,6 +49,14 @@ const jobs = [
     endpoint: "auto-publish?source=mercadolibre",
     interval: 240,
   },
+  // §8 — pull Top-20 from MercadoLibre's /ofertas page every 6h. Capped
+  // at 20 so we don't burn through the Oxylabs quota; combined with the
+  // 360-min interval that's at most 80 fetches/day from this source.
+  {
+    name: "Scrape Mercado Libre /ofertas",
+    endpoint: "scrape-ml-portada?limit=20",
+    interval: 360,
+  },
   {
     name: "Auto-publish Raw Deals",
     endpoint: "auto-publish-raw-deals",
