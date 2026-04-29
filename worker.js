@@ -102,6 +102,16 @@ const jobs = [
     endpoint: "topics-rematch",
     interval: 1440,
   },
+  // Marks admin_job_runs rows as `stale` when their heartbeat is older
+  // than 2x expected_max_duration_seconds. Without this, transient
+  // worker crashes leave `running` rows that mislead the operations
+  // dashboard. Hourly cadence is plenty since the threshold is in
+  // minutes, not seconds.
+  {
+    name: "Cleanup stale job runs",
+    endpoint: "cleanup-stale-job-runs",
+    interval: 60,
+  },
 ];
 
 console.log("=== MEGAdescuentos Cron Worker ===");
