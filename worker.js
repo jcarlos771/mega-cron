@@ -95,6 +95,14 @@ const jobs = [
     endpoint: "trust-recalc-nightly",
     interval: 1440,
   },
+  // Defensive nightly resync of topic_deals. The sync hooks in deal
+  // create/update + topic activate keep it fresh in the happy path,
+  // but if any of those silently failed the join table can drift.
+  {
+    name: "Topics rematch nightly",
+    endpoint: "topics-rematch",
+    interval: 1440,
+  },
 ];
 
 console.log("=== MEGAdescuentos Cron Worker ===");
