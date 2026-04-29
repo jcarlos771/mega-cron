@@ -4,7 +4,8 @@
  * No external dependencies — pure Node.js fetch + setInterval.
  */
 
-const API_URL = process.env.API_URL || "https://www.megadescuentos.com/api";
+const API_URL =
+  process.env.API_URL || "https://megadescuentos.okdescuentos.com/api";
 const CRON_SECRET = process.env.CRON_SECRET || "";
 
 if (!CRON_SECRET) {
@@ -39,28 +40,26 @@ async function run(name, endpoint) {
 // Each job has: name, endpoint, intervalMinutes
 
 const jobs = [
+  // Amazon — primary autopublish channel. Keepa data is reliable, so
+  // we run aggressively (every 5 min) with a small per-run cap so the
+  // site never floods.
   {
     name: "Auto-publish Amazon",
     endpoint: "auto-publish?source=amazon",
-    interval: 180,
+    interval: 5,
   },
+  // ML autopublish removed: hard-blocked in /api/cron/auto-publish.
+  // ML still enters via the inbox below (Oxylabs scrape) for manual
+  // review by editors.
   {
-    name: "Auto-publish Mercado Libre",
-    endpoint: "auto-publish?source=mercadolibre",
-    interval: 240,
-  },
-  // §8 — pull Top-20 from MercadoLibre's /ofertas page every 6h. Capped
-  // at 20 so we don't burn through the Oxylabs quota; combined with the
-  // 360-min interval that's at most 80 fetches/day from this source.
-  {
-    name: "Scrape Mercado Libre /ofertas",
+    name: "Scrape Mercado Libre /ofertas (inbox only)",
     endpoint: "scrape-ml-portada?limit=20",
-    interval: 360,
+    interval: 60,
   },
   {
     name: "Auto-publish Raw Deals",
     endpoint: "auto-publish-raw-deals",
-    interval: 120,
+    interval: 60,
   },
   {
     name: "Revalidate ML and Community Deals",
@@ -70,7 +69,7 @@ const jobs = [
   {
     name: "Scrape Promodescuentos /nuevas",
     endpoint: "scrape-promodescuentos-portada",
-    interval: 30,
+    interval: 60,
   },
   { name: "Scrape Cazaofertas", endpoint: "scrape-cazaofertas", interval: 60 },
   { name: "Price check (Keepa)", endpoint: "price-check", interval: 60 },
