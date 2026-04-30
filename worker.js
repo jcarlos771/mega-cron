@@ -112,6 +112,21 @@ const jobs = [
     endpoint: "cleanup-stale-job-runs",
     interval: 60,
   },
+  // Recomputes deal_count + status (paused if 0 deals) + auto_priority
+  // (boost when 1-14 active deals). Hourly is plenty since deals only
+  // shift around with each scrape/publish cycle.
+  {
+    name: "Categories health update",
+    endpoint: "categories-health-update",
+    interval: 60,
+  },
+  // Re-evaluates last 30 days of active deals against keyword matchers
+  // and reassigns categoría when a more specific match exists. Daily.
+  {
+    name: "Categories rematch nightly",
+    endpoint: "categories-rematch",
+    interval: 1440,
+  },
 ];
 
 console.log("=== MEGAdescuentos Cron Worker ===");
